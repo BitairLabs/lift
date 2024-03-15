@@ -1,0 +1,30 @@
+{
+  "type": "module",
+  "name": "@bitair/lift",
+  "description": "Power up Node.js for building reliable applications.",
+  "version": "0.0.2",
+  "bin": {
+    "lift": "./src/bin/index.js"
+  },
+  "exports": {
+    "./register": "./src/index.js",
+    "./tsconfig.json": "./tsconfig.json"
+  },
+  "dependencies": {
+    "typescript": "^5.4.2",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
+    "eslint": "^8.57.0",
+    "@tsconfig/strictest": "^2.0.3",
+    "@types/node": "^20.11.25"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitair-org/node-lift.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bitair-org/node-lift/issues"
+  },
+  "homepage": "https://github.com/bitair-org/node-lift#readme",
+  "license": "MIT"
+}

@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "clean": "bash scripts/clean.sh",
+    "test:prep": "npm run dist && cd dist && npm link && cd ../test && npm i && npm link @bitair/lift",
+    "test": "cd test && npm t",
+    "dist": "rm -rf dist/src && tsc --project tsconfig.dist.json",
+    "publish:dry": "npm run dist && npm publish ./dist --dry-run --access public",
+    "publish": "npm publish ./dist --access public"
+  },
+  "dependencies": {
+    "typescript": "^5.4.2"
+  },
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.3",
+    "@types/node": "^20.11.25",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.5"
+  },
+  "license": "MIT"
+}

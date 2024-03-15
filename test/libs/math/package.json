@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "name": "@libs/math",
+  "dependencies": {
+    "mathjs": "^12.4.0"
+  }
+}

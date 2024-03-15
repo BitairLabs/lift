@@ -1,0 +1,4 @@
+{
+  "extends": "@bitair/lift/tsconfig.json",
+  "include": ["app/**/*.ts", "libs/**/*.ts"]
+}

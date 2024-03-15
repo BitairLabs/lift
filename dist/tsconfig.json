@@ -1,0 +1,14 @@
+{
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": ".lift/build",
+    "target": "ESNext",
+    "module": "NodeNext",
+    "sourceMap": true,
+    "incremental": true,
+    "allowImportingTsExtensions": true,
+    "tsBuildInfoFile": ".lift/build/.tsbuildinfo",
+    "noEmit": true
+  }
+}
