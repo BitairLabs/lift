@@ -1,3 +1,7 @@
+### v0.0.3 [ 15 Mar 2024 ]
+- Implemented the init subcommand.
+- The lint subcommand is implemented.
+
 ### v0.0.2 [ 14 Mar 2024 ]
 
 - hello_world.sh script is added

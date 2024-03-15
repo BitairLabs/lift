@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { resolve as resolvePath } from 'node:path'
+import { writeFile } from 'node:fs/promises'
 import { Exception } from '../common/constants.js'
 import { LiftError } from '../common/lift_error.js'
 import { spawn } from 'node:child_process'
@@ -9,16 +9,80 @@ const subcommand = process.argv[2]
 try {
   if (!subcommand) throw new LiftError(Exception.CLISubcommandRequired, subcommand)
 
-  if (!['lint', 'run', 'test'].includes(subcommand)) throw new LiftError(Exception.CLIInvalidSubcommand, subcommand)
+  if (!['init', 'format', 'lint', 'run', 'test'].includes(subcommand))
+    throw new LiftError(Exception.CLIInvalidSubcommand, subcommand)
 
   const args = process.argv.slice(3)
 
-  if (subcommand === 'lint') {
-    const rootDir = resolvePath(import.meta.dirname, '../..')
+  const rootDir = process.cwd()
+  if (subcommand === 'init') {
+    await writeFile(
+      `${rootDir}/.eslintrc.cjs`,
+      `module.exports = {
+    env: {
+        es2024: true,
+        node: true,
+    },
+    extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/recommended-requiring-type-checking',
+        'plugin:prettier/recommended',
+    ],
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+        project: true,
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        tsconfigRootDir: '.',
+    },
+    plugins: ['@typescript-eslint'],
+}`
+    )
+    await writeFile(
+      `${rootDir}/tsconfig.json`,
+      JSON.stringify(
+        {
+          extends: '@bitair/lift/tsconfig.json',
+          compilerOptions: {
+            module: 'NodeNext'
+          },
+          include: ['**/*.ts']
+        },
+        null,
+        4
+      )
+    )
+    await writeFile(`${rootDir}/.eslintignore`, '')
+    await writeFile(
+      `${rootDir}/.prettierrc.json`,
+      JSON.stringify(
+        {
+          trailingComma: 'es5',
+          tabWidth: 4,
+          semi: false,
+          singleQuote: true
+        },
+        null,
+        4
+      )
+    )
+    await writeFile(`${rootDir}/.prettierignore`, '')
+  } else if (subcommand === 'format' || subcommand === 'lint') {
     if (!(args.includes('-c') || args.includes('--config'))) args.push('-c', `${rootDir}/.eslintrc.cjs`)
     if (!args.includes('--ext')) args.push('--ext', '.ts')
-    args.push('.')
-    exec('eslint', args)
+    if (subcommand === 'format') {
+    } else {
+      const projectArgIndex = args.indexOf('--project')
+      const tsconfigPath = projectArgIndex !== -1 ? args[projectArgIndex + 1] : undefined
+      exec('tsc', tsconfigPath ? ['--project', tsconfigPath] : ['--noEmit'])
+      if (projectArgIndex !== -1) {
+        args.splice(projectArgIndex, 1)
+        args.splice(projectArgIndex, 1)
+      }
+      args.push('.')
+      exec('eslint', args)
+    }
   } else if (subcommand === 'run') {
     exec('node', ['--import', '@bitair/lift/register', ...args])
   } else if (subcommand === 'test') {

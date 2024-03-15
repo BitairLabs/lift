@@ -11,7 +11,9 @@ cat >./package.json <<EOF
 }
 EOF
 
-npm i @bitair/lift@latest
+npm i -D @bitair/lift
+
+npx lift init
 
 touch index.ts
 cat >./index.ts <<EOF

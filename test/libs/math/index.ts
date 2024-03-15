@@ -1,3 +1,1 @@
 export { pow } from 'mathjs'
-
-
