@@ -1,10 +1,10 @@
 {
-  "type": "module",
-  "workspaces": [
-    "libs/*",
-    "app"
-  ],
-  "scripts": {
-    "test": "npm t --workspace app"
-  }
+    "type": "module",
+    "workspaces": [
+        "libs/*",
+        "app"
+    ],
+    "scripts": {
+        "test": "npm t --workspace app"
+    }
 }

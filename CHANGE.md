@@ -1,3 +1,7 @@
+### v0.1.0 [ 15 Mar 2024 ]
+- Implemented the format subcommand.
+- Improved the CLI commands
+
 ### v0.0.3 [ 15 Mar 2024 ]
 - Implemented the init subcommand.
 - The lint subcommand is implemented.

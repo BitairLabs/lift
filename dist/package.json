@@ -1,8 +1,8 @@
 {
   "type": "module",
   "name": "@bitair/lift",
-  "description": "Power up Node.js for building reliable applications.",
-  "version": "0.0.3",
+  "description": "Power up Node.js with TypeScript",
+  "version": "0.1.0",
   "bin": {
     "lift": "./src/bin/index.js"
   },

@@ -3,12 +3,13 @@ import { writeFile } from 'node:fs/promises';
 import { Exception } from '../common/constants.js';
 import { LiftError } from '../common/lift_error.js';
 import { spawn } from 'node:child_process';
+import { findFileInNearestParent } from '../common/util.js';
 const subcommand = process.argv[2];
 try {
     if (!subcommand)
         throw new LiftError(Exception.CLISubcommandRequired, subcommand);
     if (!['init', 'format', 'lint', 'run', 'test'].includes(subcommand))
-        throw new LiftError(Exception.CLIInvalidSubcommand, subcommand);
+        throw new LiftError(Exception.InvalidCLISubcommand, subcommand);
     const args = process.argv.slice(3);
     const rootDir = process.cwd();
     if (subcommand === 'init') {
@@ -49,13 +50,18 @@ try {
         await writeFile(`${rootDir}/.prettierignore`, '');
     }
     else if (subcommand === 'format' || subcommand === 'lint') {
-        if (!(args.includes('-c') || args.includes('--config')))
-            args.push('-c', `${rootDir}/.eslintrc.cjs`);
-        if (!args.includes('--ext'))
-            args.push('--ext', '.ts');
-        if (subcommand === 'format') {
+        if (!(args.includes('-c') || args.includes('--config'))) {
+            const eslintConfigPath = await findFileInNearestParent(rootDir, '.eslintrc.cjs');
+            if (!eslintConfigPath)
+                throw new LiftError(Exception.ESLintConfigNotFound);
+            args.push('-c', eslintConfigPath);
         }
-        else {
+        if (subcommand === 'format') {
+            if (!args.includes('--fix'))
+                args.push('--fix');
+            exec('eslint', args);
+        }
+        else if (subcommand === 'lint') {
             const projectArgIndex = args.indexOf('--project');
             const tsconfigPath = projectArgIndex !== -1 ? args[projectArgIndex + 1] : undefined;
             exec('tsc', tsconfigPath ? ['--project', tsconfigPath] : ['--noEmit']);
@@ -63,7 +69,6 @@ try {
                 args.splice(projectArgIndex, 1);
                 args.splice(projectArgIndex, 1);
             }
-            args.push('.');
             exec('eslint', args);
         }
     }

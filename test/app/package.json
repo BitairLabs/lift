@@ -1,12 +1,12 @@
 {
-  "type": "module",
-  "imports": {
-    "#src/*": "./src/*"
-  },
-  "scripts": {
-    "test": "npx lift test test/*.ts"
-  },
-  "dependencies": {
-    "@libs/math": ""
-  }
+    "type": "module",
+    "imports": {
+        "#src/*": "./src/*"
+    },
+    "scripts": {
+        "test": "npx lift test test/*.ts"
+    },
+    "dependencies": {
+        "@libs/math": ""
+    }
 }

@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname as getDirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
-import { readFileInNearestParent, tryRun } from '../common/util.js';
+import { readFileInNearestParent } from '../common/util.js';
 export async function load(url, _context, nextLoad) {
     if (!url.match(/\.(c|m|)ts$/))
         return nextLoad(url);
@@ -11,7 +11,8 @@ export async function load(url, _context, nextLoad) {
         ? 'commonjs'
         : url.endsWith('.mts')
             ? 'module'
-            : JSON.parse((await tryRun(async () => await readFileInNearestParent(getDirname(src), 'package.json')).result) ?? '{}').type || 'commonjs';
+            : JSON.parse((await readFileInNearestParent(getDirname(src), 'package.json')) ?? '{}').type ||
+                'commonjs';
     const source = await readFile(src, { encoding: 'utf8' });
     const transformedSource = ts.transpileModule(source, {
         fileName: src,

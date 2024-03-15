@@ -3,7 +3,7 @@ import { dirname as getDirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 
-import { readFileInNearestParent, tryRun } from '../common/util.js'
+import { readFileInNearestParent } from '../common/util.js'
 
 import type { LoadHooksContext, LoadHooksResult, PackageConfig } from '../common/types.d.js'
 
@@ -20,13 +20,8 @@ export async function load(
     ? 'commonjs'
     : url.endsWith('.mts')
       ? 'module'
-      : (
-          JSON.parse(
-            (await tryRun<Promise<string | undefined>>(
-              async () => await readFileInNearestParent(getDirname(src), 'package.json')
-            ).result) ?? '{}'
-          ) as PackageConfig
-        ).type || 'commonjs'
+      : (JSON.parse((await readFileInNearestParent(getDirname(src), 'package.json')) ?? '{}') as PackageConfig).type ||
+        'commonjs'
 
   const source = await readFile(src, { encoding: 'utf8' })
 
