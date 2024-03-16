@@ -3,21 +3,11 @@
 mkdir lift
 cd lift
 
-touch package.json
-cat >./package.json <<EOF
-{
-  "type": "module",
-  "main": "./index.ts"
-}
-EOF
-
 npm i -D @bitair/lift
 
 npx lift init
+npx lift add app server
+npx lift add lib common
+npx lift link server common
 
-touch index.ts
-cat >./index.ts <<EOF
-console.log("Hello, World!")
-EOF
-
-npx lift run .
+npm run start --workspace=@apps/server

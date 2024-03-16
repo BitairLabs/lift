@@ -1,0 +1,13 @@
+{
+    "type": "module",
+    "name": "%{0}",
+    "imports": {
+        "#src/*": "./src/*"
+    },
+    "exports": {
+        "./*": "./src/*"
+    },
+    "scripts": {
+        "test": "lift test test/*.ts"
+    }
+}

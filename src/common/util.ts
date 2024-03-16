@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { readFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname as getDirname, resolve as resolvePath } from 'node:path'
 
 export async function readFileInNearestParent(parent: string, basename: string): Promise<string | undefined> {
@@ -40,9 +41,47 @@ export function tryRun<T>(func: () => T): Partial<{ error: unknown; result: T | 
   }
 }
 
-export function format(str: string, args: unknown[]) {
+export function format(str: string, ...args: unknown[]) {
   for (let i = 0; i < args.length; i++) {
     str = str.replace(`%{${i}}`, args[i] as string)
   }
   return str
+}
+
+export function createDirIfNotExists(path: string) {
+  if (!existsSync(path)) {
+    return mkdir(path, { recursive: true })
+  }
+
+  return Promise.resolve()
+}
+
+export function writeJsonFile(src: string, content: object) {
+  return writeFile(src, JSON.stringify(content, null, 4))
+}
+
+export function writeJsonFileIfNotExists(src: string, content: object) {
+  if (!existsSync(src)) {
+    return writeFile(src, JSON.stringify(content, null, 4))
+  }
+
+  return Promise.resolve()
+}
+
+export function writeFileIfNotExists(src: string, content: string) {
+  if (!existsSync(src)) {
+    return writeFile(src, content)
+  }
+
+  return Promise.resolve()
+}
+
+export function readJsonFile(src: string) {
+  return readFile(src, 'utf8')
+    .then(content => JSON.parse(content) as unknown)
+    .catch(() => ({}))
+}
+
+export function readTextFile(src: string) {
+  return readFile(src, 'utf8')
 }

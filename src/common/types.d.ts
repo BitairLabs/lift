@@ -12,6 +12,10 @@ export declare type LoadHooksResult = {
 
 export declare type PackageConfig = {
   type?: 'module' | 'commonjs'
+  name: string
+  workspaces: string[]
+  scripts: Dict<string>
+  dependencies: Dict<string>
 }
 
 export declare type LiftConfig = {

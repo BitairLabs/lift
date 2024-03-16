@@ -1,0 +1,13 @@
+{
+    "type": "module",
+    "name": "%{0}",
+    "main": "src/index.ts",
+    "imports": {
+        "#src/*": "./src/*",
+        "#common/*": "./src/common/*"
+    },
+    "scripts": {
+        "start": "lift run .",
+        "test": "lift test test/*.ts"
+    }
+}

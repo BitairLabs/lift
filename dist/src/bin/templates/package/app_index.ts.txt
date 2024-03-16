@@ -1,0 +1,3 @@
+import { helloWorld } from '#common/util.ts'
+
+console.log(helloWorld())

@@ -19,7 +19,7 @@ export async function load(url, _context, nextLoad) {
         compilerOptions: {
             target: ts.ScriptTarget.ESNext,
             module: format === 'commonjs' ? ts.ModuleKind.CommonJS : ts.ModuleKind.ESNext,
-            sourceMap: true,
+            inlineSourceMap: true,
             esModuleInterop: format === 'commonjs'
         }
     }).outputText;

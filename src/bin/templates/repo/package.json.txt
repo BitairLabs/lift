@@ -1,0 +1,10 @@
+{
+    "scripts": {
+        "lint": "lift lint **/*.ts",
+        "format": "lift format '**/*.{*ts,*js,json,yaml,md}'"
+    },
+    "workspaces": [
+        "libs/*",
+        "apps/*"
+    ]
+}

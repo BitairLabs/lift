@@ -5,7 +5,7 @@
     "clean": "bash scripts/clean.sh",
     "test:prep": "npm run dist && cd dist && npm link && cd ../test && npm i && npm link @bitair/lift",
     "test": "cd test && npm t",
-    "dist": "rm -rf dist/src && tsc --project tsconfig.dist.json",
+    "dist": "rm -rf dist/src && tsc --project tsconfig.dist.json && cp -r src/bin/templates dist/src/bin",
     "publish:dry": "npm run dist && npm publish ./dist --dry-run --access public",
     "publish": "npm publish ./dist --access public"
   },
