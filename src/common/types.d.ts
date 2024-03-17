@@ -1,12 +1,25 @@
-export declare type LoadHooksContext = {
+export declare type ResolveHookContext = {
   conditions: string[]
-  format: string | null | undefined
+  importAttributes: object
+  parentURL?: string | undefined
+}
+
+export declare type ResolveHookResult = {
+  format?: string | null | undefined
+  importAttributes?: object | undefined
+  shortCircuit?: undefined | boolean
+  url: string
+}
+
+export declare type LoadHookContext = {
+  conditions: string[]
+  format?: string | null | undefined
   importAttributes: object
 }
 
-export declare type LoadHooksResult = {
+export declare type LoadHookResult = {
   format: 'builtin' | 'commonjs' | 'json' | 'module' | 'wasm'
-  shortCircuit: boolean | undefined
+  shortCircuit?: boolean | undefined
   source: string
 }
 

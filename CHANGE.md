@@ -1,3 +1,7 @@
+### v0.2.1 [ 17 Mar 2024 ]
+
+- Supported TypeScript module resolution when importing a TS module with a .js file extension.
+
 ### v0.2.1 [ 16 Mar 2024 ]
 
 - Improved the CLI commands.

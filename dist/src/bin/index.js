@@ -32,7 +32,17 @@ try {
     program
         .command('init')
         .description('Generate a monorepo')
-        .action(async () => await init());
+        .action(async () => {
+        console.log('\n');
+        const banner = figlet.textSync('  Lift', {
+            font: 'ANSI Shadow',
+            horizontalLayout: 'default',
+            verticalLayout: 'default',
+            whitespaceBreak: true
+        });
+        console.log(banner);
+        await init();
+    });
     program
         .command('add <type> <name>')
         .description('Add a new app or lib to the monorepo')
@@ -61,14 +71,6 @@ try {
         .description('Run a TypeScript program')
         .allowUnknownOption()
         .action(async () => await run());
-    console.log('\n');
-    const banner = figlet.textSync('  Lift', {
-        font: 'ANSI Shadow',
-        horizontalLayout: 'full',
-        verticalLayout: 'full',
-        whitespaceBreak: true
-    });
-    console.log(banner);
     await program.parseAsync(process.argv);
 }
 catch (error) {

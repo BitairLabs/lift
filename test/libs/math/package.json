@@ -1,6 +1,9 @@
 {
     "type": "module",
     "name": "@libs/math",
+    "exports": {
+        "./*": "./src/*"
+    },
     "dependencies": {
         "mathjs": "^12.4.0"
     }

@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
 
-import { helloWorld } from '#src/util.ts'
+import { helloWorld } from '#src/util.js'
 
 await describe('Testing util module', async () => {
     await it('helloWorld', () => {
