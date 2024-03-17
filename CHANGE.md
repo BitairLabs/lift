@@ -1,3 +1,7 @@
+### v0.2.1 [ 16 Mar 2024 ]
+
+- Improved the CLI commands.
+
 ### v0.2.0 [ 16 Mar 2024 ]
 
 - Added monorepo setup to the init subcommand.

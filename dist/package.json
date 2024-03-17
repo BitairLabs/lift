@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@bitair/lift",
   "description": "Power up Node.js with TypeScript",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "bin": {
     "lift": "./src/bin/index.js"
   },
@@ -18,7 +18,13 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "3.2.5"
+    "prettier": "3.2.5",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "figlet": "^1.7.0",
+    "inquirer": "^9.2.16",
+    "typescript": "^5.4.2",
+    "validate-npm-package-name": "^5.0.0"
   },
   "repository": {
     "type": "git",

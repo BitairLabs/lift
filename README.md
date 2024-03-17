@@ -1,4 +1,4 @@
-Integrating TypeScript with Node.js, especially in a monorepo project, can be challenging. Lift aims to address this challenge by offering a CLI tool.
+Integrating TypeScript with Node.js, especially in a monorepo project, can be a challenging and time-consuming process. Lift aims to streamline the process and eliminate the need to build TypeScript in both development and production environments. Lift is not limited to just this functionality and seeks to enhance Node.js in other aspects, such as integrating it with a more efficient HTTP server. That's why it's named Lift instead of Node.ts.
 
 ### Features
 
@@ -18,21 +18,22 @@ Save and run the [hello world](./scripts/hello_world.sh) script to see Lift in a
 
 ```bash
 npm i -D @bitair/lift
-npx lift init
+lift init
 ```
 
 #### Subcommands
 
-|        | Description                                                    | Example                                                                                                                                        | Status          |
-| ------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| init   | Creates a monorepo                                             | npx lift init                                                                                                                                  | Implemented     |
-| add    | Generates a project (app or lib)                               | npx lift add app server<br>npx lift add lib common<br>npx lift add app @my-org/my-project.server<br>npx lift add lib @my-org/my-project.common | Implemented     |
-| link   | Links an app with a library                                    | npx lift link server common<br>npx lift link my-project.server my-project.common                                                               | Implemented     |
-| format | Formats files                                                  | npx lift format \*\*/\*.ts                                                                                                                     | Implemented     |
-| lint   | Performs type, syntax, and style linting                       | npx lift lint \*\*/\*.ts                                                                                                                       | Implemented     |
-| test   | Runs the Node.js built-in test runner on TypeScript test suits | npx lift test test/\*.ts                                                                                                                       | Implemented     |
-| run    | Runs a TypeScript program                                      | npx lift run index.ts                                                                                                                          | Implemented     |
-| debug  | Generates a debug configuration for VSCode                     |                                                                                                                                                | Not Implemented |
+|        | Description                                | Example                                                                                                                           | Status          |
+| ------ | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| help   | Lists the subcommands                      | lift help                                                                                                                         | Implemented     |
+| init   | Generates a monorepo                       | lift init                                                                                                                         | Implemented     |
+| add    | Adds a new app or lib to the monorepo      | lift add app server<br> lift add lib common<br> lift add app @my-org/my-project.server<br> lift add lib @my-org/my-project.common | Implemented     |
+| link   | Links a lib to an app                      | lift link server common<br> lift link my-project.server my-project.common                                                         | Implemented     |
+| format | Formats the code                           | lift format \*\*/\*.ts                                                                                                            | Implemented     |
+| lint   | Lints the code                             | lift lint \*\*/\*.ts                                                                                                              | Implemented     |
+| test   | Runs TypeScript test suits                 | lift test test/\*.ts                                                                                                              | Implemented     |
+| run    | Runs a TypeScript program                  | lift run index.ts                                                                                                                 | Implemented     |
+| debug  | Generates a debug configuration for VSCode |                                                                                                                                   | Not Implemented |
 
 #### Notes
 
