@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "@apps/server",
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "scripts": {
+    "test": "node --import @bitair/lift/register --test test/*.ts"
+  }
+}

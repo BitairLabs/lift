@@ -4,7 +4,8 @@
     "outDir": "dist/src",
     "rootDir": "src",
     "target": "ESNext",
-    "module": "NodeNext"
+    "module": "NodeNext",
+    "declaration": true
   },
   "include": ["src/**/*.ts"]
 }

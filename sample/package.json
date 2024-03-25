@@ -1,0 +1,19 @@
+{
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "clean": "npm exec --workspaces -- rm -rf node_modules",
+    "lint": "tsc && eslint libs/**/*.ts && eslint apps/**/*.ts",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,yaml,md}'",
+    "start:client": "npm run start --workspace=@apps/client",
+    "start:server": "npm run start --workspace=@apps/server",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@bitair/lift": "^0.3.0"
+  },
+  "license": "MIT"
+}

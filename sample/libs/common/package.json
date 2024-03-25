@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "name": "@libs/common",
+  "exports": {
+    "./*": "./src/*"
+  }
+}

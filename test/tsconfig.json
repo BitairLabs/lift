@@ -1,7 +1,0 @@
-{
-    "extends": "@bitair/lift/tsconfig.json",
-    "compilerOptions": {
-        "module": "NodeNext"
-    },
-    "include": ["**/*.ts"]
-}

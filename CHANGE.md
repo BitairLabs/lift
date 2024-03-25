@@ -1,3 +1,8 @@
+### v0.3.0 [ 17 Mar 2024 ]
+
+- Dropped the CLI feature
+- Implemented TypeScript compiler server
+
 ### v0.2.1 [ 17 Mar 2024 ]
 
 - Supported TypeScript module resolution when importing a TS module with a .js file extension.

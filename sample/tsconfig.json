@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "target": "ESNext",
     "module": "NodeNext",
+    "jsx": "react",
     "noEmit": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["libs/**/*.ts*", "apps/**/*.ts*"]
 }

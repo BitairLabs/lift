@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import fs, { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname as getDirname, resolve as resolvePath } from 'node:path';
 export async function readFileInNearestParent(parent, basename) {
     try {
@@ -38,14 +36,14 @@ export function tryRun(func) {
         return { error };
     }
 }
-export function format(str, ...args) {
+export function formatString(str, ...args) {
     for (let i = 0; i < args.length; i++) {
         str = str.replace(`%{${i}}`, args[i]);
     }
     return str;
 }
-export function createDirIfNotExists(path) {
-    if (!existsSync(path)) {
+export async function createDirIfNotExists(path) {
+    if (!(await fileExists(path))) {
         return mkdir(path, { recursive: true });
     }
     return Promise.resolve();
@@ -53,14 +51,14 @@ export function createDirIfNotExists(path) {
 export function writeJsonFile(src, content) {
     return writeFile(src, JSON.stringify(content, null, 4));
 }
-export function writeJsonFileIfNotExists(src, content) {
-    if (!existsSync(src)) {
+export async function writeJsonFileIfNotExists(src, content) {
+    if (!(await fileExists(src))) {
         return writeFile(src, JSON.stringify(content, null, 4));
     }
     return Promise.resolve();
 }
-export function writeFileIfNotExists(src, content) {
-    if (!existsSync(src)) {
+export async function writeFileIfNotExists(src, content) {
+    if (!(await fileExists(src))) {
         return writeFile(src, content);
     }
     return Promise.resolve();
@@ -72,4 +70,13 @@ export function readJsonFile(src) {
 }
 export function readTextFile(src) {
     return readFile(src, 'utf8');
+}
+export async function fileExists(src) {
+    try {
+        await access(src, fs.constants.F_OK);
+        return true;
+    }
+    catch (error) {
+        return false;
+    }
 }

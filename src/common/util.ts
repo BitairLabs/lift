@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { existsSync } from 'node:fs'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import fs, { access, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname as getDirname, resolve as resolvePath } from 'node:path'
 
 export async function readFileInNearestParent(parent: string, basename: string): Promise<string | undefined> {
@@ -41,15 +39,15 @@ export function tryRun<T>(func: () => T): Partial<{ error: unknown; result: T | 
   }
 }
 
-export function format(str: string, ...args: unknown[]) {
+export function formatString(str: string, ...args: unknown[]) {
   for (let i = 0; i < args.length; i++) {
     str = str.replace(`%{${i}}`, args[i] as string)
   }
   return str
 }
 
-export function createDirIfNotExists(path: string) {
-  if (!existsSync(path)) {
+export async function createDirIfNotExists(path: string) {
+  if (!(await fileExists(path))) {
     return mkdir(path, { recursive: true })
   }
 
@@ -60,16 +58,16 @@ export function writeJsonFile(src: string, content: object) {
   return writeFile(src, JSON.stringify(content, null, 4))
 }
 
-export function writeJsonFileIfNotExists(src: string, content: object) {
-  if (!existsSync(src)) {
+export async function writeJsonFileIfNotExists(src: string, content: object) {
+  if (!(await fileExists(src))) {
     return writeFile(src, JSON.stringify(content, null, 4))
   }
 
   return Promise.resolve()
 }
 
-export function writeFileIfNotExists(src: string, content: string) {
-  if (!existsSync(src)) {
+export async function writeFileIfNotExists(src: string, content: string | NodeJS.ArrayBufferView) {
+  if (!(await fileExists(src))) {
     return writeFile(src, content)
   }
 
@@ -84,4 +82,13 @@ export function readJsonFile(src: string) {
 
 export function readTextFile(src: string) {
   return readFile(src, 'utf8')
+}
+
+export async function fileExists(src: string) {
+  try {
+    await access(src, fs.constants.F_OK)
+    return true
+  } catch (error) {
+    return false
+  }
 }

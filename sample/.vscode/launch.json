@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "npm run start:client",
+      "name": "Debug Client",
+      "request": "launch",
+      "type": "node-terminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

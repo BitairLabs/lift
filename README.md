@@ -1,46 +1,138 @@
-Setting up a TypeScript monorepo with Node.js can be a challenging and time-consuming process. Lift aims to provide a more native and lightweight solution by leveraging [NPM workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces/) and Node.js's [subpath patterns](https://nodejs.org/docs/latest-v20.x/api/packages.html#subpath-patterns). Additionally, Lift seeks to eliminate the need for building TypeScript for development and production environments.
+Lift eliminates the need to build TypeScript in the development environment for both backend and frontend apps.
 
 ### Features
 
-- [x] Running and testing TypeScript (both CommonJS and ES module systems)
-- [x] Integration with the built-in Node.js test runner
-- [x] Integration with ESLint and Prettier for linting and formatting
-- [x] Monorepo setup
-- [ ] TypeScript debugging
+- [x] Resolving TypeScript modules for Node.js apps
+- [x] Resolving TypeScript, TSX, JSX, and CSS modules for React apps
+- [x] Sharing libraries in a monorepo using [NPM workspaces](https://docs.npmjs.com/cli/v10/using-npm/workspaces) and [scoped packages](https://docs.npmjs.com/cli/v10/using-npm/scope)
+- [x] Supporting Node.js's [subpath patterns](https://nodejs.org/docs/latest-v20.x/api/packages.html#subpath-patterns)
+- [x] Doesn't compile external packages
+- [x] Change and re-evaluate a frontend app without restarting it (refreshing the browser should be done manually)
+- [ ] Change and re-evaluate a backend app without restarting it
+- [x] Integration with any Node.js binary command that supports ES modules (through the --import flag)
+- [x] Easy debugging an app with VSCode
 
-## Hello World!
+### Technical facts
 
-Save and run the [hello world](./scripts/hello_world.sh) script to see Lift in action:
+- Has been built with the ES module system.
+- Starts an app faster and uses less energy due to on-demand compilation instead of a build process.
+- Uses TypeScript API instead of third-party libraries for compilation.
+- Has no runtime dependencies other than TypeScript
 
 ### Usage:
 
 ```bash
-npm i -D @bitair/lift
-npx lift init
+npm i -S @bitair/lift
 ```
 
-#### Subcommands
+#### Hello, World!
 
-|        | Description                                | Example                                            | Status          |
-| ------ | ------------------------------------------ | -------------------------------------------------- | --------------- |
-| help   | Lists the subcommands                      | npx lift help                                      | Implemented     |
-| init   | Generates a monorepo                       | npx lift init                                      | Implemented     |
-| add    | Adds a new app or lib to the monorepo      | npx lift add app server<br>npx lift add lib common | Implemented     |
-| link   | Links a lib to an app                      | npx lift link common server                        | Implemented     |
-| format | Formats the code                           | npx lift format \*\*/\*.ts                         | Implemented     |
-| lint   | Lints the code                             | npx lift lint \*\*/\*.ts                           | Implemented     |
-| test   | Runs TypeScript test suits                 | npx lift test test/\*.ts                           | Implemented     |
-| run    | Runs a TypeScript program                  | npx lift run index.ts                              | Implemented     |
-| debug  | Generates a debug configuration for VSCode |                                                    | Not Implemented |
+```bash
+git clone https://github.com/bitair-org/lift
+cd lift/sample
+npm i
+npm run start:client # Open the DevTools and refresh the page.
+```
 
-#### Notes
+### On-demand Compilation
 
-- Lift can resolve both '.ts' and '.js' importations.
+On-demand compilation works for both frontend and backend.
 
-- The `lint` subcommand uses the `eslint` command with the `--config` argument pointing to the `.eslintrc.cjs` file at the root of the repo. To set a specific configuration file, reset the `--config` argument. Other available options of the eslint command can also be included.
+To enable it, you should use the import flag:
 
-- The `lint` subcommand also utilizes the `tsc` command with a predefined set of configurations. To specify a custom set of configurations, set the `--tsconfig` argument to point to a `tsconfig.json` file. No options from the `tsc` command will be processed and should not be passed.
+```bash
+node --import @bitair/lift/register src/index.ts
+node --test --import @bitair/lift/register test/*.ts
+```
 
-- The `format` subcommand uses the `prettier` command with the `--write` argument. Other options of the prettier command can also be included.
+For a frontend app:
 
-- The `test` subcommand uses the `node` command with the `--test` argument. Additional options of the node command can also be specified.
+1. Create a static file server:
+
+   `server.ts`
+
+   ```ts
+   import { resolve as compileAndResolve } from '@bitair/lift/compiler-server'
+   import express from 'express'
+   import path from 'node:path'
+
+   const app = express()
+   const wwwDir = path.join(import.meta.dirname, './www')
+
+   // Register the on-demand compiler server
+   app.use(compileAndResolve(wwwDir))
+   // Let Express take care of non-script files
+   app.use(express.static(wwwDir))
+
+   const port = process.env['PORT']
+
+   app.listen(port, () => {
+     console.log(`${process.env['APP_NAME']} is running on port ${port}`)
+   })
+   ```
+
+2. Move the app's code to the `www` folder
+3. Create an `index.html` entry for the app and define import maps for its external packages:
+
+   `index.html`
+
+   ```html
+   <!doctype html>
+   <html lang="en">
+     <head>
+       <title>Lift - Hello, World!</title>
+       <script type="importmap">
+         {
+           "imports": {
+             "react-dom": "https://unpkg.com/@esm-bundle/react-dom/esm/react-dom.development.js",
+             "react": "https://unpkg.com/@esm-bundle/react/esm/react.development.js"
+           }
+         }
+       </script>
+       <script type="module" src="./pages/main.js"></script>
+     </head>
+     <body>
+       <div id="root"></div>
+     </body>
+   </html>
+   ```
+
+Run the server with:
+
+```bash
+PORT=8000 APP_NAME=Client node --import @bitair/lift/register server.ts
+```
+
+Please refer to the [sample client](./sample/apps/client/) app for the complete code:
+
+### Debugging
+
+To debug a backend app or its test suites using VScode, first create an NPM script:
+
+```js
+  "scripts": {
+    "start": "node --import @bitair/lift/register src/index.ts",
+    "test": "node --test --import @bitair/lift/register test/*.ts"
+  }
+```
+
+Then create a new configuration in the `.vscode/launch.json` file and run it:
+
+```json
+{
+  "command": "npm run start",
+  "name": "Debug Server",
+  "request": "launch",
+  "type": "node-terminal",
+  "internalConsoleOptions": "neverOpen"
+},
+{
+  "command": "npm test",
+  "name": "Debug Server Tests",
+  "request": "launch",
+  "type": "node-terminal",
+  "internalConsoleOptions": "neverOpen"
+}
+```
+
+Debugging a frontend app takes place in the browser DevTools, so you don't need to do anything in your IDE. However, you must use the `debugger` keyword in your code. When debugging a frontend app, you don't need to restart the app either; simply make changes to the code and press CTRL+F5.
