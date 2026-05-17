@@ -2,10 +2,11 @@
   "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
     "outDir": "dist/src",
-    "rootDir": "src",
+    "rootDir": "lib/src",
     "target": "ESNext",
     "module": "NodeNext",
-    "declaration": true
+    "declaration": false,
+    "types": ["node"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["lib/src/**/*.ts"]
 }

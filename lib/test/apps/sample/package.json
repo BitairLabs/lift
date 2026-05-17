@@ -5,6 +5,6 @@
     "#src/*": "./src/*"
   },
   "scripts": {
-    "test": "node --import @bitair/lift/register --test test/*.ts"
+    "test": "node --import @bitair/lift --test test/*.ts"
   }
 }

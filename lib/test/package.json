@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@bitair/lift": "../../dist"
+  },
+  "license": "MIT"
+}

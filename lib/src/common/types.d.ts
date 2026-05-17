@@ -18,7 +18,7 @@ export declare type LoadHookContext = {
 }
 
 export declare type LoadHookResult = {
-  format: 'builtin' | 'commonjs' | 'json' | 'module' | 'wasm'
+  format: 'commonjs' | 'module'
   shortCircuit?: boolean | undefined
   source: string
 }
@@ -29,10 +29,6 @@ export declare type PackageConfig = {
   workspaces: string[]
   scripts: Dict<string>
   dependencies: Dict<string>
-}
-
-export declare type LiftConfig = {
-  tsconfig: Dict<unknown>
 }
 
 export declare type Dict<T> = {

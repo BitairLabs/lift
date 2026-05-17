@@ -1,35 +1,18 @@
 {
   "type": "module",
   "name": "@bitair/lift",
-  "description": "Power up Web Development with TypeScript",
-  "version": "0.3.0",
+  "description": "Drop-in TypeScript module importer for Node.js",
+  "version": "0.4.0",
   "exports": {
-    "./register": "./src/module_loader.js",
-    "./compiler-server": "./src/compiler-server.js"
-  },
-  "dependencies": {
-    "@tsconfig/strictest": "^2.0.3",
-    "@types/node": "^20.11.25",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "3.2.5",
-    "chalk": "^5.3.0",
-    "commander": "^12.0.0",
-    "figlet": "^1.7.0",
-    "inquirer": "^9.2.16",
-    "typescript": "^5.4.2",
-    "validate-npm-package-name": "^5.0.0"
+    ".": "./src/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bitair-org/node-lift.git"
+    "url": "git+https://github.com/bitairlabs/node-lift.git"
   },
   "bugs": {
-    "url": "https://github.com/bitair-org/node-lift/issues"
+    "url": "https://github.com/bitairlabs/node-lift/issues"
   },
-  "homepage": "https://github.com/bitair-org/node-lift#readme",
+  "homepage": "https://github.com/bitairlabs/node-lift#readme",
   "license": "MIT"
 }

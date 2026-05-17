@@ -1,3 +1,10 @@
+### v0.4.0 [ 17 May 2026 ]
+
+- Upgraded all dependency packages to their latest versions.
+- Implemented compilation caching.
+- Refactored the project folder structure.
+- Removed support for frontend TypeScript resolution (JSX/CSS)
+
 ### v0.3.0 [ 17 Mar 2024 ]
 
 - Dropped the CLI feature
