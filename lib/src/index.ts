@@ -1,14 +1,11 @@
-import { existsSync } from 'node:fs'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { register } from 'node:module'
 import { dirname, resolve as resolvePath } from 'node:path'
 import { cwd } from 'node:process'
 import { fileURLToPath } from 'node:url'
 
-import ts from 'typescript'
-
-import { findFileInNearestParent, readFileInNearestParent, readJsonFile, readTextFileIfExists } from './common/util.js'
+import { fileExists, findFileInNearestParent, readJsonFile, readTextFileIfExists } from './common/util.js'
 
 import type {
   LoadHookContext,
@@ -18,14 +15,17 @@ import type {
   ResolveHookResult
 } from './common/types.js'
 
+type Format = 'commonjs' | 'module'
 type Meta = {
   hash: string
 }
 type LiftConfig = {
+  enableCaching: boolean
   cacheDir: string
+  compiler: 'esbuild' | 'tsc'
 }
 
-const { cacheDir } = await getLiftConfig()
+const { enableCaching, cacheDir, compiler } = await getLiftConfig()
 
 register('./index.js', import.meta.url)
 
@@ -35,12 +35,12 @@ export async function resolve(
   nextResolve: (specifier: string, context?: object) => Promise<ResolveHookResult>
 ): Promise<ResolveHookResult> {
   if (specifier.match(/\.(c|m|)js$/)) {
-    return nextResolve(specifier, context).catch(error => {
+    return nextResolve(specifier, context).catch(async error => {
       const { code = '', url = '' } = error as { code: string; url: string }
       if (code === 'ERR_MODULE_NOT_FOUND' && url.match(/js$/)) {
         const src = fileURLToPath(url).replace(/js$/, 'ts')
         // If the corresponding .ts exists, redirect .js -> .ts
-        if (existsSync(src))
+        if (await fileExists(src))
           return {
             format: 'typescript',
             shortCircuit: true,
@@ -69,54 +69,51 @@ export async function load(
   if (context.format === 'typescript') {
     const tsPath = fileURLToPath(url)
 
+    const packageConfigPath = (await findFileInNearestParent(dirname(tsPath), 'package.json')) ?? 'package.json'
+    const packageConfig = (await readJsonFile(packageConfigPath)) as PackageConfig
     const format = tsPath.match(/\.cts$/)
       ? 'commonjs'
       : url.match(/\.mts$/)
         ? 'module'
-        : (JSON.parse((await readFileInNearestParent(dirname(tsPath), 'package.json')) ?? '{}') as PackageConfig)
-            .type || 'commonjs'
+        : packageConfig.type || 'commonjs'
 
-    const sourceCode = await readFile(tsPath, { encoding: 'utf8' })
-    const sourceCoreHash = createHash('sha256').update(sourceCode).digest('hex')
-
-    const cacheKey = createHash('sha256').update(`${tsPath}::${format}`).digest('hex')
-
-    const jsPath = resolvePath(cacheDir, `${cacheKey}.js`)
-    const metaPath = resolvePath(cacheDir, `${cacheKey}.meta.json`)
-
-    const metaFile = await readTextFileIfExists(metaPath)
-    if (metaFile) {
-      try {
-        const meta = JSON.parse(metaFile) as Meta
-        if (meta.hash === sourceCoreHash) {
-          const cachedJs = await readTextFileIfExists(jsPath)
-          if (cachedJs != undefined) {
-            return {
-              format,
-              shortCircuit: true,
-              source: cachedJs
+    let sourceCoreHash
+    let cacheKey
+    let jsPath
+    let metaPath
+    if (enableCaching) {
+      const sourceCode = await readFile(tsPath, { encoding: 'utf8' })
+      sourceCoreHash = createHash('sha256').update(sourceCode).digest('hex')
+      cacheKey = createHash('sha256').update(`${tsPath}::${format}`).digest('hex')
+      jsPath = resolvePath(cacheDir, `${cacheKey}.js`)
+      metaPath = resolvePath(cacheDir, `${cacheKey}.meta.json`)
+      const metaFile = await readTextFileIfExists(metaPath)
+      if (metaFile) {
+        try {
+          const meta = JSON.parse(metaFile) as Meta
+          if (meta.hash === sourceCoreHash) {
+            const cachedJs = await readTextFileIfExists(jsPath)
+            if (cachedJs != undefined) {
+              return {
+                format,
+                shortCircuit: true,
+                source: cachedJs
+              }
             }
           }
+        } catch {
+          //
         }
-      } catch {
-        //
       }
     }
 
-    const transformedSource = ts.transpileModule(sourceCode, {
-      fileName: tsPath,
-      compilerOptions: {
-        target: ts.ScriptTarget.ESNext,
-        module: format === 'commonjs' ? ts.ModuleKind.CommonJS : ts.ModuleKind.ESNext,
-        inlineSourceMap: true,
-        esModuleInterop: format === 'commonjs'
-      }
-    }).outputText
+    const transformedSource = await compile(tsPath, format)
 
-    const metaContent = JSON.stringify({ hash: sourceCoreHash }, null, 0)
-
-    await writeFile(jsPath, transformedSource)
-    await writeFile(metaPath, metaContent)
+    if (enableCaching) {
+      const metaContent = JSON.stringify({ hash: sourceCoreHash! }, null, 0)
+      await writeFile(jsPath!, transformedSource)
+      await writeFile(metaPath!, metaContent)
+    }
 
     return {
       format,
@@ -128,16 +125,52 @@ export async function load(
   return nextLoad(url)
 }
 
+async function compile(path: string, format: Format) {
+  switch (compiler) {
+    case 'esbuild': {
+      const esbuild = await import('esbuild')
+      return (
+        await esbuild.build({
+          entryPoints: [path],
+          write: false,
+          bundle: false,
+          platform: 'node',
+          format: format === 'commonjs' ? 'cjs' : 'esm',
+          target: 'es2022',
+          sourcemap: 'inline'
+        })
+      ).outputFiles[0]!.text
+    }
+    case 'tsc': {
+      const ts = await import('typescript')
+      return ts.transpileModule(await readFile(path, { encoding: 'utf8' }), {
+        fileName: path,
+        compilerOptions: {
+          target: ts.ScriptTarget.ESNext,
+          module: format === 'commonjs' ? ts.ModuleKind.CommonJS : ts.ModuleKind.ESNext,
+          inlineSourceMap: true,
+          esModuleInterop: format === 'commonjs'
+        }
+      }).outputText
+    }
+    default:
+      throw new Error(`Lift Error: Unsupported compiler "${compiler}"`)
+  }
+}
+
 async function getLiftConfig() {
   const configBasename = '.lift.json'
   const configPath = (await findFileInNearestParent(cwd(), configBasename)) ?? resolvePath(cwd(), configBasename)
   const config = (await readJsonFile(configPath)) as LiftConfig
 
   if (!config.cacheDir) config.cacheDir = './.lift/cache'
+  if (!config.compiler) config.compiler = 'esbuild'
+  if (config.enableCaching === undefined) config.enableCaching = true
 
-  config.cacheDir = resolvePath(dirname(configPath), config.cacheDir)
-
-  await mkdir(config.cacheDir, { recursive: true })
+  if (config.enableCaching) {
+    config.cacheDir = resolvePath(dirname(configPath), config.cacheDir)
+    await mkdir(config.cacheDir, { recursive: true })
+  }
 
   return config
 }

@@ -1,5 +1,5 @@
 import { power } from '#lib/math.js'
 
-// In VS Code, place a breakpoint or uncomment the following line and press F5
+// Use the debugger statement with esbuild or set a breakpoint with tsc
 // debugger
 console.log(power(2, 3))

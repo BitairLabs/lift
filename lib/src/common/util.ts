@@ -1,22 +1,6 @@
 import fs, { access, readFile } from 'node:fs/promises'
 import { dirname, resolve as resolvePath } from 'node:path'
 
-export async function readFileInNearestParent(parent: string, basename: string): Promise<string | undefined> {
-  try {
-    const path = resolvePath(parent, basename)
-    const content = await readFile(path, { encoding: 'utf8' })
-    return content
-  } catch {
-    //
-  }
-
-  const oldParent = parent
-  parent = dirname(parent)
-  if (parent !== oldParent) return await readFileInNearestParent(parent, basename)
-
-  return undefined
-}
-
 export async function findFileInNearestParent(parent: string, basename: string): Promise<string | undefined> {
   const path = resolvePath(parent, basename)
   if (await fileExists(path)) return path

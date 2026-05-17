@@ -1,3 +1,7 @@
+### v0.4.1 [ 17 May 2026 ]
+
+- Implemented compilation using esbuild
+
 ### v0.4.0 [ 17 May 2026 ]
 
 - Upgraded all dependency packages to their latest versions.

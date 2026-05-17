@@ -2,35 +2,64 @@
 
 ### Key Features
 
-- **Lightning-Fast Startup:** Compiles TypeScript modules only when required, eliminating the build step and cold-start latency.
-- **Native Format Support:** Resolves both CommonJS and ES Modules (ESM) transparently.
+- **Lazy and Incremental Compilation:** Compiles TypeScript modules only when they are referenced or modified.
+- **Native Format Support:** Resolves both CommonJS and ES Modules (ESM) transparently.
 - **Advanced NPM Support:** Fully supports:
   - [NPM Workspaces](https://docs.npmjs.com/cli/v11/using-npm/workspaces)
   - [Scoped Packages](https://docs.npmjs.com/cli/v11/using-npm/scope)
   - [Subpath Patterns](https://nodejs.org/api/packages.html#subpath-patterns)
-- **Debugging Ready:** Fully compatible with standard debuggers.
+- **Debugging‑Ready:** Fully compatible with standard debuggers.
+
+Lift can use either the official TypeScript's [compiler](https://www.typescriptlang.org/docs/handbook/compiler-options.html) and [esbuild](https://esbuild.github.io) for compilation.
+
+### Benchmark
+
+**TypeScript "Hello, World!" – Execution Times:**
+
+| Runtime     | Cache | Time      |
+| ----------- | ----- | --------- |
+| **bun**     | –     | `0.046 s` |
+| **deno**    | –     | `0.125 s` |
+| **lift**    | hit   | `0.249 s` |
+| **lift**    | miss  | `0.380 s` |
+| **tsx**     | –     | `1.444 s` |
+| **ts-node** | –     | `1.682 s` |
 
 ### Installation
 
 Install the package as a development dependency:
 
 ```bash
-npm i -D typescript @bitair/lift
+npm i -D @bitair/lift
+```
+
+One of the `typescript` or `esbuild` packages must be installed as well.
+
+```bash
+npm i -D typescript
+```
+
+or
+
+```bash
+npm i -D esbuild
 ```
 
 ### Usage
 
-Then run your TypeScript modules directly using the `--import` flag:
+Run a TypeScript modules directly using the `--import` flag:
 
 ```bash
 node --enable-source-maps --import @bitair/lift src/index.ts
 ```
 
-To change the default cache dir, add a `.lift.json` file to your project's root with the following content:
+To change the default Lift configuration, add a `.lift.json` file to the project root with the following content:
 
 ```json
 {
-  "cacheDir": ".lift/cache"
+  "enableCaching": true, // default is true
+  "cacheDir": ".lift/cache", // default is [cwd]/.lift/cache
+  "compiler": "esbuild" // or tsc, default is esbuild
 }
 ```
 
@@ -47,5 +76,9 @@ You can use Nodemon with the following config to enable hot reloading in your pr
   "exec": "node --enable-source-maps --import @bitair/lift src/index.ts"
 }
 ```
+
+**Debugging**
+
+A breakpoint set in the source will only be hit when you compile with `tsc`. If you’re using the `esbuild` compiler, insert a `debugger` statement instead.
 
 See the [sample](./sample) and [test](./lib/test/) projects for examples.
