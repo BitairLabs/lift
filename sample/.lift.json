@@ -1,5 +1,5 @@
 {
-  "enableCaching": true,
+  "enableCaching": false,
   "cacheDir": ".lift/cache",
-  "compiler": "tsc"
+  "compiler": "native"
 }

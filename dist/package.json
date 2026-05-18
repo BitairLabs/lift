@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@bitair/lift",
   "description": "Drop-in TypeScript module importer for Node.js",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "exports": {
     ".": "./src/index.js"
   },

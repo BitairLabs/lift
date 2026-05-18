@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "lift-sample",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "main": "src/index.ts",
   "imports": {
     "#lib/*": "./src/lib/*"
@@ -11,7 +11,7 @@
     "benchmark": "bash scripts/benchmark.sh"
   },
   "devDependencies": {
-    "@bitair/lift": "^v0.4.1",
+    "@bitair/lift": "../dist",
     "esbuild": "^0.28.0",
     "nodemon": "^3.1.14",
     "tsx": "^4.22.1",

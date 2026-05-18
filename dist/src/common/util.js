@@ -10,27 +10,20 @@ export async function findFileInNearestParent(parent, basename) {
         return await findFileInNearestParent(parent, basename);
     return undefined;
 }
-export async function readJsonFile(src) {
-    try {
-        const content = await readFile(src, 'utf8');
-        return JSON.parse(content);
-    }
-    catch {
-        return {};
-    }
+export async function readTextFileIfExists(path) {
+    const { result: content } = await tryRunAsync(async () => await readFile(path, { encoding: 'utf8' }));
+    return content;
 }
-export async function readTextFileIfExists(src) {
-    try {
-        const content = await readFile(src, { encoding: 'utf8' });
-        return content;
-    }
-    catch {
-        return undefined;
-    }
+export async function readTextFile(path) {
+    return readFile(path, { encoding: 'utf8' });
 }
-export async function fileExists(src) {
+export async function readJsonFileIfExists(path) {
+    const { result: content } = await tryRunAsync(async () => await readFile(path, { encoding: 'utf8' }));
+    return content ? JSON.parse(content) : undefined;
+}
+export async function fileExists(path) {
     try {
-        await access(src, fs.constants.F_OK);
+        await access(path, fs.constants.F_OK);
         return true;
     }
     catch {
@@ -40,6 +33,14 @@ export async function fileExists(src) {
 export function tryRun(func) {
     try {
         return { result: func() };
+    }
+    catch (error) {
+        return { error };
+    }
+}
+export async function tryRunAsync(func) {
+    try {
+        return { result: await func() };
     }
     catch (error) {
         return { error };

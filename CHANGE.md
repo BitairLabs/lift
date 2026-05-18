@@ -1,3 +1,7 @@
+### v0.4.3 [ 18 May 2026 ]
+
+- Implemented compilation using the Node.js' native TypeScript transformer
+
 ### v0.4.1 [ 17 May 2026 ]
 
 - Implemented compilation using esbuild
